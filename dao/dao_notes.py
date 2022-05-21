@@ -1,11 +1,19 @@
 import os
 from flask import Flask
-from commons.connection import mongo_connection
+from flask_pymongo import PyMongo
 
 app = Flask(__name__)
+app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
 
-collection = mongo_connection.db.notes
+app.logger.info('Try to connect to the database')
+try:
+    app.logger.info('Connected correctly')
+    mongo = PyMongo(app)
+    collection = mongo.db.notes
 
+except:
+    app.logger.info('Failed to connect')
+    app.logger.info('Method insert_one init')
 
 def insert_one(propery):
     app.logger.info('Method insert_one init')
