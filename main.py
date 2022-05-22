@@ -18,8 +18,11 @@ def notes():
     app.logger.info('Method notes init')
     if request.method == 'GET':
         app.logger.info('GET')
-        message = controller_notes_get()
-        result = body_response(message)
+        params = dict(request.args)
+        app.logger.info(f'Params: {params}')
+        message, status, count_all= controller_notes_get(params)
+        result = body_response(message, status)
+        result.headers['X-Total-Count'] = count_all
     else:
         app.logger.info('POST')
         body = dict(request.json)
@@ -37,14 +40,13 @@ def notes_id(note_id):
         result = body_response(message,204)
     elif request.method == 'DELETE':
         app.logger.info('DELETE')
-        body = dict(request.json)
-        message = controller_notes_deleted(note_id, body)
-        result = body_response(message,204)
+        message, status = controller_notes_deleted(note_id)
+        result = body_response(message,status)
     else:
         app.logger.info('PATCH')
         body = dict(request.json)
-        message = controller_notes_patch(note_id, body)
-        result = body_response(message,204)
+        message, status = controller_notes_patch(note_id, body)
+        result = body_response(message, status)
     app.logger.info('Method notes_id ending')
     return result
 
