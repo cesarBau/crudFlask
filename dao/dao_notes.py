@@ -1,4 +1,5 @@
 import os
+import traceback
 from flask import Flask
 from flask_pymongo import PyMongo
 
@@ -10,10 +11,9 @@ try:
     app.logger.info('Connected correctly')
     mongo = PyMongo(app)
     collection = mongo.db.notes
+except Exception:
+    traceback.print_exc()
 
-except:
-    app.logger.info('Failed to connect')
-    app.logger.info('Method insert_one init')
 
 def insert_one(propery):
     app.logger.info('Method insert_one init')
@@ -23,6 +23,7 @@ def insert_one(propery):
     app.logger.info(f'Result insert: {result_operation.inserted_id}')
     app.logger.info('Method insert_one ending')
     return result
+
 
 def find(select, propery):
     app.logger.info('Method find init')
@@ -35,18 +36,21 @@ def find(select, propery):
     app.logger.info('Method find ending')
     return result_operation, count_all
 
+
 def find_paginated(select, propery, pages):
     app.logger.info('Method find_subdocument init')
-    skip = (pages['page'] - 1)* pages['perpage']
+    skip = (pages['page'] - 1) * pages['perpage']
     app.logger.info(f'Query mongo: {propery}')
     app.logger.info(f'projection mongo: {select}')
     app.logger.info(f'Skip: {skip} and limit: {pages["perpage"]}')
     count_all = collection.count_documents(propery)
-    result_operation = list(collection.find(filter=propery, projection=select).skip(skip).limit(pages['perpage']))
+    result_operation = list(collection.find(
+        filter=propery, projection=select).skip(skip).limit(pages['perpage']))
     app.logger.info(f'Result search: {result_operation}')
     app.logger.info(f'Count find: {count_all}')
     app.logger.info('Method find_subdocument ending')
     return result_operation, count_all
+
 
 def update_one(propery):
     app.logger.info('Method insert_one init')
@@ -56,6 +60,7 @@ def update_one(propery):
     app.logger.info(f'Result insert: {result_operation.inserted_id}')
     app.logger.info('Method insert_one ending')
     return result
+
 
 def delete_one(note_id):
     app.logger.info('Method delete_one init')
