@@ -15,4 +15,4 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV MONGO_URI='mongodb://localhost:27017/note'
 
-CMD [ "python", "main.py"]
+CMD [ "python","main.py"]
