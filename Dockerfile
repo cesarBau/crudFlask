@@ -13,6 +13,6 @@ EXPOSE 3000
 ENV FLASK_APP=main.py
 ENV HOST=0.0.0.0
 ENV PORT=3000
-ENV MONGO_URI='mongodb://localhost:27017/note'
+ENV MONGO_URI='mongodb+srv://sootcrack:wEjH1nb4zffJm8F1@cluster0.8rgay.mongodb.net/notes'
 
-CMD [ "python","main.py"]
+CMD [ "python", "main.py"]
