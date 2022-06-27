@@ -2,7 +2,7 @@ from flask import Flask
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 from dao.dao_notes import insert_one
-from services.services_notes import service_notes_get, service_notes_deleted
+from services.services_notes import service_notes_get, service_notes_deleted, service_notes_put
 
 app = Flask(__name__)
 
@@ -25,8 +25,7 @@ def controller_notes_get(params):
 def controller_notes_post(body):
     app.logger.info('Method controller_notes_post init')
     app.logger.info(f'Petition body : {body}')
-    message = insert_one(body)
-    result = message
+    result = insert_one(body)
     app.logger.info('Method controller_notes_post ending')
     return result
 
@@ -35,7 +34,7 @@ def controller_notes_put(note_id, body):
     app.logger.info('Method controller_notes_put init')
     app.logger.info(f'Path param : {note_id}')
     app.logger.info(f'Petition body : {body}')
-    result = body
+    result = service_notes_put(note_id, body)
     app.logger.info('Method controller_notes_put ending')
     return result
 
@@ -54,12 +53,3 @@ def controller_notes_deleted(note_id):
         app.logger.info(result)
     app.logger.info('Method controller_notes_deleted ending')
     return result, status
-
-
-def controller_notes_patch(note_id, body):
-    app.logger.info('Method controller_notes_patch init')
-    app.logger.info(f'Path param : {note_id}')
-    app.logger.info(f'Petition body : {body}')
-    result = body
-    app.logger.info('Method controller_notes_patch ending')
-    return result

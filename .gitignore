@@ -193,4 +193,8 @@ cython_debug/
 # Ignore code-workspaces
 *.code-workspace
 
+#ignore env
+
+crud-flask
+
 # End of https://www.toptal.com/developers/gitignore/api/flask,visualstudiocode

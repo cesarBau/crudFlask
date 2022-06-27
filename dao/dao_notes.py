@@ -5,7 +5,6 @@ from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
-
 app.logger.info('Try to connect to the database')
 try:
     app.logger.info('Connected correctly')
@@ -52,14 +51,12 @@ def find_paginated(select, propery, pages):
     return result_operation, count_all
 
 
-def update_one(propery):
+def update_one(note_id, propery):
     app.logger.info('Method insert_one init')
-    result_operation = collection.insert_one(propery)
-    result = propery
-    result['_id'] = result_operation.inserted_id
-    app.logger.info(f'Result insert: {result_operation.inserted_id}')
+    result_operation = collection.update_one(note_id, propery, upsert=True)
+    app.logger.info(f'result_operation: {result_operation.raw_result}')
     app.logger.info('Method insert_one ending')
-    return result
+    return result_operation
 
 
 def delete_one(note_id):

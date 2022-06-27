@@ -1,20 +1,9 @@
 from flask import Flask
 from bson.objectid import ObjectId
-from dao.dao_notes import insert_one, find, find_paginated, delete_one
+from dao.dao_notes import insert_one, find, find_paginated, delete_one, update_one
+from commons.utils import create_select
 
 app = Flask(__name__)
-
-
-def create_select(params):
-    select = {}
-    if 'field' in params:
-        select = {
-            params['field']: True,
-            '_id': False
-        }
-        params[params['field']] = {'$exists': True}
-        del params['field']
-    return select, params
 
 
 def service_notes_get(params):
@@ -49,7 +38,9 @@ def service_notes_put(note_id, body):
     app.logger.info('Method service_notes_put init')
     app.logger.info(f'Path param : {note_id}')
     app.logger.info(f'Petition body : {body}')
-    result = body
+    result = update_one({'_id': ObjectId(note_id)}, {
+        '$set': body
+    })
     app.logger.info('Method service_notes_put ending')
     return result
 

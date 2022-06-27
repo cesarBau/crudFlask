@@ -1,11 +1,12 @@
-import json
 from flask import Flask, Response, request, jsonify
 from flask_cors import CORS
 from controller.controller_notes import controller_notes_get
 from controller.controller_notes import controller_notes_post
 from controller.controller_notes import controller_notes_put
 from controller.controller_notes import controller_notes_deleted
-from controller.controller_notes import controller_notes_patch
+from commons.utils import default_error
+import json
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -42,7 +43,7 @@ def notes():
     return result
 
 
-@app.route('/notes/<note_id>', methods=['PUT', 'DELETE', 'PATCH'])
+@app.route('/notes/<note_id>', methods=['PUT', 'DELETE'])
 def notes_id(note_id):
     app.logger.info('Method notes_id init')
     if request.method == 'PUT':
@@ -50,14 +51,9 @@ def notes_id(note_id):
         body = dict(request.json)
         message = controller_notes_put(note_id, body)
         result = body_response(message, 204)
-    elif request.method == 'DELETE':
+    else:
         app.logger.info('DELETE')
         message, status = controller_notes_deleted(note_id)
-        result = body_response(message, status)
-    else:
-        app.logger.info('PATCH')
-        body = dict(request.json)
-        message, status = controller_notes_patch(note_id, body)
         result = body_response(message, status)
     app.logger.info('Method notes_id ending')
     return result
@@ -66,10 +62,7 @@ def notes_id(note_id):
 @app.errorhandler(404)
 def not_found(error=None):
     app.logger.info('Error: not_found')
-    message = {
-        'url': request.url,
-        'error': error
-    }
+    message = default_error(request.url, error)
     app.logger.error(message)
     result = body_response(message, 404)
     return result
@@ -78,10 +71,7 @@ def not_found(error=None):
 @app.errorhandler(405)
 def method_not_allowed(error=None):
     app.logger.info('Error: method_not_allowed')
-    message = {
-        'url': request.url,
-        'error': error
-    }
+    message = default_error(request.url, error)
     app.logger.error(message)
     result = body_response(message, 405)
     return result
@@ -90,10 +80,10 @@ def method_not_allowed(error=None):
 @app.errorhandler(400)
 def method_bat_request(error=None):
     app.logger.info('Error: method_bat_request')
-    message = {
-        'url': request.url,
-        'error': error
-    }
+    message = default_error(request.url, error)
     app.logger.error(message)
     result = body_response(message, 405)
     return result
+
+
+app.run(host=os.environ.get('HOST'), port=int(os.environ.get('PORT')))
